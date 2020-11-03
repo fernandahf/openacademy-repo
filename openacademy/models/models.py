@@ -2,7 +2,7 @@
 
 from odoo import models, fields, api, exceptions
 from psycopg2 import IntegrityError
-
+from datetime import timedelta
 
 class Course(models.Model):
     _name = 'openacademy.course'
@@ -65,6 +65,21 @@ class Session(models.Model):
     attendee_ids = fields.Many2many('res.partner', string='Attendees')
     taken_seats = fields.Float(compute='_taken_seats')
     active = fields.Boolean(default=True)
+    end_date = fields.Date(store=True, compute='_get_end_date',
+                            inverse='_set_end_date')
+    attendees_count = fields.Integer(store=True, compute='_get_attendees_count')
+    color =  fields.Float()
+    hours = fields.Float(string="Duration in hours",
+                         compute='_get_hours', inverse='_set_hours')
+
+    @api.depends('duration')
+    def _get_hours(self):
+        for r in self:
+            r.hours = r.duration * 24
+
+    def _set_hours(self):
+        for r in self:
+            r.duration = r.hours / 24
 
     @api.depends('seats', 'attendee_ids')
     def _taken_seats(self):
@@ -75,6 +90,35 @@ class Session(models.Model):
                 record.taken_seats = 0
             else:
                 record.taken_seats = 100.0 * len(record.attendee_ids) / record.seats
+
+    @api.depends('start_date', 'duration')
+    def _get_end_date(self):
+        for r in self:
+            if not (r.start_date and r.duration):
+                r.end_date = r.start_date
+                continue
+
+            # Add duration to start_date, but: Monday + 5 days = Saturday, so
+            # subtract one second to get on Friday instead
+            start = fields.Datetime.from_string(r.start_date)
+            duration = timedelta(days=r.duration, seconds=-1)
+            r.end_date = start + duration
+
+    def _set_end_date(self):
+        for r in self:
+            if not (r.start_date and r.end_date):
+                continue
+
+            # Compute the difference between dates, but: Friday - Monday = 4 days,
+            # so add one day to get 5 days instead
+            start_date = fields.Datetime.from_string(r.start_date)
+            end_date = fields.Datetime.from_string(r.end_date)
+            r.duration = (end_date - start_date).days + 1
+    
+    @api.depends('attendee_ids')
+    def _get_attendees_count(self):
+        for r in self:
+            r.attendees_count = len(r.attendee_ids)
 
     @api.onchange('seats', 'attendee_ids')
     def _verify_valid_seats(self):
