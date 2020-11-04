@@ -5,6 +5,7 @@ from odoo import models, fields, api
 
 class Wizard(models.TransientModel):
     _name = 'openacademy.wizard'
+    _description = 'Desciption of Wizard'
 
     def _default_session(self):
         session_obj = self.env['openacademy.session']
