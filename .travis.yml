@@ -7,7 +7,7 @@ cache:
     - $HOME/.cache/pip
 
 addons:
-  postgresql: "12"
+  postgresql: "10"
   apt:
     packages:
       - expect-dev  # provides unbuffer utility
