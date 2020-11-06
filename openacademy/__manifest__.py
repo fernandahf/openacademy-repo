@@ -6,14 +6,14 @@
        Open Academy module for managing trainings:
        - training courses
        - training sessions
-       - attendees registration       
+       - attendees registration
        """,
 
     'description': """
-        Long description of module's purpose
+        Descriptin different to use in module openacademy.
     """,
 
-    'author': "My Company",
+    'author': "Vauxoo",
     'website': "http://www.yourcompany.com",
 
     # Categories can be used to filter modules in modules listing
@@ -33,7 +33,6 @@
         'views/templates.xml',
         'views/partner.xml',
         'reports.xml',
-        # 'views/session_board.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
