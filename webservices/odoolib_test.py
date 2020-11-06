@@ -1,21 +1,23 @@
+# flake8: noqa
+# pylint: disable-all
 import odoorpc
 
 # Prepare the connection to the server
-odoo = odoorpc.ODOO('localhost', port=8069)
+odoo = odoorpc.ODOO("localhost", port=8069)
 
 # Check available databases
 print(odoo.db.list())
 
 # Login
-odoo.login('odoo-demodb', 'fernanda@vauxoo.com', 'Vauxoo')
+odoo.login("odoo-demodb", "fernanda@vauxoo.com", "Vauxoo")
 
 # Current user
 user = odoo.env.user
-print(user.name)            # name of the user connected
-print(user.company_id.name) # the name of its company
+print(user.name)  # name of the user connected
+print(user.company_id.name)  # the name of its company
 
 # Simple 'raw' query
-user_data = odoo.execute('res.users', 'read', [user.id])
+user_data = odoo.execute("res.users", "read", [user.id])
 print(user_data)
 
-odoo.execute('openacademy.course', 'create', {'name': 'Course created from odoolib'})
+odoo.execute("openacademy.course", "create", {"name": "Course created from odoolib"})

@@ -1,23 +1,20 @@
-# -*- coding: utf-8 -*-
-
-from odoo import models, fields
+from odoo import fields, models
 
 
 class Wizard(models.TransientModel):
-    _name = 'openacademy.wizard'
-    _description = 'Desciption of Wizard'
+    _name = "openacademy.wizard"
+    _description = "Desciption of Wizard"
 
     def _default_session(self):
-        session_obj = self.env['openacademy.session']
-        session_ids = self._context.get('active_ids')
+        session_obj = self.env["openacademy.session"]
+        session_ids = self._context.get("active_ids")
         session_record = session_obj.browse(session_ids)
         return session_record
 
     session_ids = fields.Many2many(
-        'openacademy.session',
-        required=True,
-        default=_default_session)
-    attendee_ids = fields.Many2many('res.partner')
+        "openacademy.session", required=True, default=_default_session
+    )
+    attendee_ids = fields.Many2many("res.partner")
 
     # @api.multi
     def subscribe(self):
